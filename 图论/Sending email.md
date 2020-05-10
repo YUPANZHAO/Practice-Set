@@ -60,7 +60,7 @@ vis[i]表示节点 i 是否已经为最短路径长度，也表示是否被收�
 
 执行循环 while(!pq.empty()) 直到不存在未被收录的节点,题目中只要查询起点 s 到 t节点的最短延迟秒数，所以 if( t节点被收录 ) break;
 
-取出最小堆的对顶元素即优先队列的头个元素，记为节点v，若 v_dist > dist[v_n] 则表示该节点被更新过了，直接continue, 否则就将该节点收录到答案中
+取出最小堆的堆顶元素即优先队列的头个元素，记为节点v，若 v_dist > dist[v_n] 则表示该节点被更新过了，直接continue, 否则就将该节点收录到答案中
 
 然后对于节点 v 的每个未收录邻接点 w，若 v_dist + e.cost < dist[w_n]，则更新dist[w_n], 接着将 w 节点压入队列 pq.push(P(dist[w_n], w_n));
 
@@ -75,35 +75,35 @@ vis[i]表示节点 i 是否已经为最短路径长度，也表示是否被收�
 using namespace std;
 
 const int INF = 2000000000;
-struct Edge{
+struct Edge{ //链式前向星
     int to;
     int cost;
 };
-vector<Edge> edge[20005];
-typedef pair<int,int> P;
+vector<Edge> edge[20005]; //邻接表
+typedef pair<int,int> P; 
 int n, m, s, t, dist[20005];
 bool vis[20005];
 
 void Dijkstra(){
-    dist[s] = 0;
-    priority_queue<P, vector<P>, greater<P> > pq;
-    pq.push(P(0,s));
+    dist[s] = 0; //初始化起始节点s
+    priority_queue<P, vector<P>, greater<P> > pq; //优先队列,最小堆
+    pq.push(P(0,s)); //压入起始节点
 
     while(!pq.empty()){
-        P v = pq.top(); pq.pop();
+        P v = pq.top(); pq.pop(); //取未收录节点中dist最小的节点
         int v_dist = v.first;
         int v_n = v.second;
-        if(v_dist > dist[v_n]) continue;
-        vis[v_n] = true;
-        if(v_n == t) break;
+        if(v_dist > dist[v_n]) continue; //该节点之前被更新了，舍弃掉
+        vis[v_n] = true; //标记为被收录
+        if(v_n == t) break; //找到s到t的最短路径长度了，直接退出
 
-        for(int i=0; i < edge[v_n].size(); i++){
+        for(int i=0; i < edge[v_n].size(); i++){ //v的邻接点w
             Edge e = edge[v_n][i];
             int w_dist = v_dist + e.cost;
             int w_n = e.to;
-            if(vis[w_n] == false && w_dist < dist[w_n]){
+            if(vis[w_n] == false && w_dist < dist[w_n]){ //找到一条更短的路径
                 dist[w_n] = w_dist;
-                pq.push(P(dist[w_n], w_n));
+                pq.push(P(dist[w_n], w_n)); //更新w节点
             }
         }
     }
@@ -113,7 +113,7 @@ int main(){
     cin >> kase;
     while(kase--){
         cin >> n >> m >> s >> t;
-        for(int i=0; i < n; i++){
+        for(int i=0; i < n; i++){ //初始化
             dist[i] = INF;
             vis[i] = false;
             edge[i].clear();
@@ -126,11 +126,11 @@ int main(){
             e.cost = c;
             edge[a].push_back(e);
             e.to = a;
-            edge[b].push_back(e);
+            edge[b].push_back(e); //因为是无向图，两个方向都要储存
         }
         Dijkstra();
         cout << "Case #" << ++k << ": ";
-        if(dist[t] == INF) cout << "unreachable\n";
+        if(dist[t] == INF) cout << "unreachable\n"; //图不连通
         else cout << dist[t] << endl;
     }
 }
