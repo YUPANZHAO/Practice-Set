@@ -1,4 +1,5 @@
 # Not the Best
+
 ### LightOJ-1099
 
 Robin has moved to a small village and sometimes enjoys returning to visit one of his best friends. He does not want to get to his old home too quickly, because he likes the scenery along the way. He has decided to take the second-shortest rather than the shortest path. He knows there must be some second-shortest path.
@@ -38,6 +39,13 @@ For each case, print the case number and the second best shortest path as descri
 Case 1: 150
 Case 2: 450
 ```
+## 题解
+
+Dijkstra算法
+
+求次短路，用 dist1 储存最短路长度，dist2 储存次短路长度
+
+取消 vis 判断各节点是否被收录，让每条边可以走多次，往回走
 
 ## code:
 
@@ -71,11 +79,11 @@ void Dijkstra(){
             Edge e = edge[v_n][i];
             int w_dist = v_dist + e.cost;
             int w_n = e.to;
-            if(dist1[w_n] > w_dist){
+            if(dist1[w_n] > w_dist){ // 判断是否为最短路
                 swap(dist1[w_n], w_dist);
                 pq.push(P(dist1[w_n], w_n));
             }
-            if(dist2[w_n] > w_dist && dist1[w_n] < w_dist){
+            if(dist2[w_n] > w_dist && dist1[w_n] < w_dist){ //判断是否为次短路
                 dist2[w_n] = w_dist;
                 pq.push(P(dist2[w_n], w_n));
             }
